@@ -4,13 +4,6 @@ import PySide6.QtCore
 import downloader
 import stats
 import re
-################################################################################
-## Form generated from reading UI file 'untitled.ui'
-##
-## Created by: Qt User Interface Compiler version 6.6.0
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
 from downloader import mod_pack_get
 import json
 from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
@@ -26,8 +19,9 @@ import background_rc
 
 
 class Launch_game(QThread):
-    def __init__(self, progress_bar, progress_label,function1,main, parent=None):
+    def __init__(self, progress_bar, progress_label,function1,main,mainwindow, parent=None,):
         super().__init__(parent)
+        self.mainwindow = mainwindow
         self.progress_bar = progress_bar
         self.progress_bar.setVisible(False)
         self.progress_bar.setValue(10)
@@ -36,24 +30,24 @@ class Launch_game(QThread):
         self.main = main
 
     def run(self):
-        try:
-            self.progress_bar.setValue(20)
-            self.progress_bar.setVisible(True)
-            self.progress_label.setText('Качаем')
-            downloader.get_jsons()
-        finally:
-            self.progress_bar.setValue(30)
-            downloader.game_get()
-            self.progress_bar.setValue(60)
-            downloader.modpack_download(downloader.get_modpack_version())
-            self.progress_bar.setValue(70)
-            downloader.mod_pack_get()
-            self.progress_bar.setValue(100)
-            self.progress_label.setText('Играем')
-            downloader.game_start()
-            self.progress_bar.setVisible(False)
-            self.progress_label.setText('')
-            self.function1()
+
+        self.progress_bar.setValue(20)
+        self.progress_bar.setVisible(True)
+        self.progress_label.setText('Качаем')
+        downloader.modpack_download()
+        self.progress_bar.setValue(30)
+        downloader.game_get()
+        self.progress_bar.setValue(60)
+        self.progress_bar.setValue(70)
+        downloader.mod_pack_get()
+        self.progress_bar.setValue(100)
+        self.progress_label.setText('Играем')
+        self.mainwindow.setHidden(True)
+        downloader.game_start()
+        self.mainwindow.setHidden(False)
+        self.progress_bar.setVisible(False)
+        self.progress_label.setText('')
+        self.function1()
 
 
 
@@ -64,6 +58,9 @@ class Ui_MainWindow(object):
             print('Шрифт minecraft не установлен')
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
+        icon_mainwindow = QIcon()
+        icon_mainwindow.addFile(u":/images/images/test_ico.ico", QSize(), QIcon.Normal, QIcon.Off)
+        MainWindow.setWindowIcon(icon_mainwindow)
         MainWindow.resize(300, 400)
         MainWindow.setMinimumSize(QSize(300, 400))
         MainWindow.setMaximumSize(QSize(300, 400))
@@ -238,7 +235,7 @@ class Ui_MainWindow(object):
         QMetaObject.connectSlotsByName(MainWindow)
         self.pushButton.clicked.connect(self.on_clickk)
         self.pushButton.clicked.connect(self.on_imput)
-        self.launch_potok = Launch_game(progress_bar=self.progressBar, progress_label=self.label_4,function1=self.full_hide,main = self)
+        self.launch_potok = Launch_game(progress_bar=self.progressBar, progress_label=self.label_4,function1=self.full_hide,main = self,mainwindow = MainWindow)
 
     # Кнопка настроек
         self.pushButton_2 = QPushButton(self.frame)
@@ -288,12 +285,12 @@ class Ui_MainWindow(object):
         self.label_5.setStyleSheet(u"font: 8pt ")
         self.label_5.setHidden(True)
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QCoreApplication.translate("MainWindow", u"MainWindow", None))
+        MainWindow.setWindowTitle(QCoreApplication.translate("mainWindow", u"Launcher", None))
         self.pushButton.setText(QCoreApplication.translate("MainWindow", u"\u0418\u0433\u0440\u0430\u0442\u044c", None))
         self.lineEdit.setInputMask("")
         self.label.setText(
             QCoreApplication.translate("MainWindow", u"\u041b\u0430\u0443\u043d\u0447\u0435\u0440", None))
-        self.label_2.setText(QCoreApplication.translate("MainWindow", u"v 0.1", None))
+        self.label_2.setText(QCoreApplication.translate("MainWindow", u"v 0.2", None))
         self.label_3.setText(QCoreApplication.translate("MainWindow", u"\u0410 \u0441\u044e\u0434\u0430 \u0442\u0438\u043f\u043e \u043d\u0438\u043a\u043d\u0435\u0439\u043c \u043f\u0438\u0441\u0430\u0442\u044c",None))
 
     def on_imput(self):

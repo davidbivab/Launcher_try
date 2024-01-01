@@ -5,8 +5,6 @@ def get_size(bytes, suffix="B"):
         if bytes < factor:
             return f"{bytes:.2f}"
         bytes /= factor
-
-
 def get_mem():
     svmem = psutil.virtual_memory()
     return round(float(get_size(svmem.total)))
